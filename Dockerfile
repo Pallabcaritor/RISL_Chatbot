@@ -1,22 +1,11 @@
-FROM python:3.8.0-stretch AS BASE
-
-RUN apt-get update \
-    && apt-get --assume-yes --no-install-recommends install \
-        build-essential \
-        curl \
-        git \
-        jq \
-        libgomp1 \
-        vim
-
-WORKDIR /app
-
-# upgrade pip version
-RUN pip install --no-cache-dir --upgrade pip
-
-RUN pip install rasa==3.0.8
-
-ADD config.yml config.yml
-ADD domain.yml domain.yml
-ADD credentials.yml credentials.yml
-ADD endpoints.yml endpoints.yml
+FROM tensorflow/tensorflow:2.2.0
+RUN mkdir -p /rasa_app
+WORKDIR /rasa_app
+COPY . /rasa_app
+RUN python -m pip install -U pip
+RUN pip3 install -r requirements.txt
+#RUN pip3 install --user rasa-nlu==0.14.0
+#RUN pip3 install --user rasa-core==0.13.2
+RUN python -m spacy download en
+RUN pip3 install --user rasa==2.1.2
+RUN pip3 install --user sanic==19.9.0
